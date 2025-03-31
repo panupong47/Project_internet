@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Repair Form</title>
+    <link rel="stylesheet" href="service.css">
+</head>
+<body>
+    <header>
+        <div class="container-header">
+            <nav>
+                <div class="logo">Computer Repair Shopp ⏵ Repair Form</div>
+                <ul class="nav-links">
+                    <li><a href="#">หน้าแรก</a></li>
+                    <li><a href="#">บริการ</a></li>
+                    <li><a href="#">เกี่ยวกับเรา</a></li>
+                    <li><a href="#">ราคา</a></li>
+                    <li><a href="DataAdmin.html">จัดการข้อมูล</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    <div class="container-register">
+        <div class="header">
+            Repair Form
+        </div>
+
+        <div class="flex form-input">
+            <div class="header-form">ชื่อ - นามกุล</div>
+            <input class="form" name="firstname" type="text">
+        </div>
+        <div class="flex form-input">
+            <div class="header-form">โทร</div>
+            <input class="form" name="tle" type="text">
+        </div>
+        <div class="flex form-input">
+            <div class="header-form">E-mail</div>
+            <input class="form" name="email" type="email">
+        </div>
+        <div class="flex form-input">
+            <div class="header-form">Address</div>
+            <input class="form" name="Address" type="Address">
+        </div>
+        
+        <!-- Added date field -->
+        <div class="flex form-input">
+            <div class="header-form">วันที่ส่งซ่อม</div>
+            <input class="form" name="repairDate" type="date">
+        </div>
+
+        <div class="flex gender form-input">
+            <div class="header-form">บริการ</div>
+            <div class="form-group">
+                <select id="service" name="service">
+                    <option value="">-- กรุณาเลือกบริการ --</option>
+                    <option value="ซ่อมคอมพิวเตอร์">ซ่อมคอมพิวเตอร์</option>
+                    <option value="อัพเกรดคอมพิวเตอร์">อัพเกรดคอมพิวเตอร์</option>
+                    <option value="กำจัดไวรัส">กำจัดไวรัส</option>
+                    <option value="บำรุงรักษา">บำรุงรักษา</option>
+                    <option value="ติดตั้งโปรแกรม">ติดตั้งโปรแกรม</option>
+                    <option value="กู้ข้อมูล">กู้ข้อมูล</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-input">
+
+            <div id="message" class="message"></div>
+
+            <div class="center" style="vertical-align:middle"><span>
+                    <button type="button" onclick="submitData()" class="button">Submit</span></button>
+            </div>
+
+        </div>
+        <script src="https://cdn.jsdelivr.net/npm/axios@1.6.7/dist/axios.min.js"></script>
+        <script src="service.js"></script>
+    </div>
+    <footer>
+        <div class="container">
+            <div class="logo">Computer Repair Shopp</div>
+            <p>| บริการซ่อมคอมพิวเตอร์มืออาชีพ รวดเร็ว เชื่อถือได้ |</p>
+            <ul class="footer-links">
+                <li><a href="#">หน้าแรก</a></li>
+                <li><a href="#">บริการ</a></li>
+                <li><a href="#">เกี่ยวกับเรา</a></li>
+                <li><a href="#">ราคา</a></li>
+                <li><a href="#">ติดต่อ</a></li>
+            </ul>
+            <ul class="social-icons">
+                <li><a href="#">📱</a></li>
+                <li><a href="#">📘</a></li>
+                <li><a href="#">📸</a></li>
+                <li><a href="#">▶️</a></li>
+            </ul>
+        </div>
+    </footer>
+</body>
+
+</html>

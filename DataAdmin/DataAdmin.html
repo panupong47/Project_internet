@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DataAdmin</title>
+    <link rel="stylesheet" href="DataAdmin.css">
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">User management page</div>
+    </div>
+    <div class="center">
+        <table id="user-data">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Title</th>
+                    <th>E-mail</th>
+                    <th>Service-Date</th>
+                    <th>Address</th>
+                    <th>Service</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="user"></tbody>
+        </table>
+    </div>
+    <div class="container-login">
+        <div class="header">Admin Data</div>
+    </div>
+    <div class="center">
+        <table id="user-data">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>password</th>
+                </tr>
+            </thead>
+            <tbody id="user"></tbody>
+        </table>
+    </div>
+    <div class="position_center">
+        <div class="button-back2register">
+            <button type="button" id="register" onclick="window.location.href='Home.html';">Back to Register
+            </button>
+
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios@1.6.7/dist/axios.min.js"></script>
+    <script src="DataAdmin.js"></script>
+</body>
+
+</html>
