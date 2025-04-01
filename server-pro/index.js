@@ -59,14 +59,14 @@ app.post('/tb_data', async (req, res) => {
         let data = req.body;
         
         // ตรวจสอบข้อมูล
-        if (!data.id || !data.name || !data.tle || !data.Email || !data.service_date || !data.address || !data.service ) {
+        if (!data.Name || !data.Tle || !data.Email || !data.service_date || !data.Address || !data.service || !data.price) {
             return res.status(400).json({ message: 'กรุณากรอกข้อมูลให้ครบทุกช่อง' });
         }
-        
+
         // บันทึกข้อมูลลงฐานข้อมูล
         const [results] = await conn.query(
-            'INSERT INTO tb_data (name, tle, Email,service_data ,address,service) VALUES (?, ?, ?, ?, ?, ?, ?)',
-            [data.name, data.tle, data.Email, data.address]
+            'INSERT INTO tb_data (Name, Tle, Email, service_date, Address, service, price) VALUES (?, ?, ?, ?, ?, ?, ?)',
+            [data.Name, data.Tle, data.Email, data.service_date, data.Address, data.service, data.price]
         );
 
         res.json({ message: 'เพิ่มข้อมูลสำเร็จ', data: results });

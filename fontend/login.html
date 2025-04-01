@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login | Admin</title>
     <link rel="stylesheet" href="login.css">
+    <script src="login.js"></script>
 </head>
 <body>
     <header>
@@ -12,24 +13,22 @@
             <nav>
                 <div class="logo">Computer Repair Shopp ⏵ Login | Admin</div>
                 <ul class="nav-links">
-                    <li><a href="#">หน้าแรก</a></li>
-                    <li><a href="#">บริการ</a></li>
-                    <li><a href="#">เกี่ยวกับเรา</a></li>
-                    <li><a href="#">ราคา</a></li>
-                    <li><a href="#">service</a></li>
+                    <li><a href="Home.html">หน้าแรก</a></li>
+                    <li><a href="Home.html">บริการ</a></li>
+                    <li><a href="service.html">service</a></li>
                 </ul>
             </nav>
         </div>
     </header>
     <div class="login-container">
         <h2>Login</h2>
-        <form action="#" method="post">
+        <form id="loginForm">
             <div class="input-group">
-                <label for="username">ชื่อผู้ใช้</label>
-                <input type="text" id="username" name="username" required>
+                <label for="useremail">Email</label>
+                <input type="email" id="useremail" name="useremail" required>
             </div>
             <div class="input-group">
-                <label for="password">รหัสผ่าน</label>
+                <label for="password">Password</label>
                 <input type="password" id="password" name="password" required>
             </div>
             <div class="center">

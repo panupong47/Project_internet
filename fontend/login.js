@@ -23,24 +23,24 @@ app.post('/login', async (req, res) => {
     }
 });
 
-app.listen(4747, () => console.log('Server running on port 4747'));
+app.listen(4720, () => console.log('Server running on port 4720'));
 
 // Frontend: Next.js with Firebase Authentication
 import { useState } from 'react';
-import { getAuth, signInWithPopup, GoogleAuthProvider, FacebookAuthProvider, signInWithEmailAndPassword } from 'firebase/auth';
+import { getAuth, signInWithPopup, signInWithEmailAndPassword } from 'firebase/auth';
 import firebaseApp from '../firebase';
 
 const auth = getAuth(firebaseApp);
 
 export default function Login() {
-    const [email, setEmail] = useState('pannupong jarakhon');
+    const [email, setEmail] = useState('panupong@gmail.com');
     const [password, setPassword] = useState('beam471919!!');
 
     const loginWithProvider = async (provider) => {
         try {
             const result = await signInWithPopup(auth, provider);
             const token = await result.user.getIdToken();
-            const response = await fetch('http://localhost:4747/login', {
+            const response = await fetch('http://localhost:4720/login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ firebaseToken: token })
@@ -58,7 +58,7 @@ export default function Login() {
         try {
             const userCredential = await signInWithEmailAndPassword(auth, email, password);
             const token = await userCredential.user.getIdToken();
-            const response = await fetch('http://localhost:4747/login', {
+            const response = await fetch('http://localhost:4720/login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ firebaseToken: token })

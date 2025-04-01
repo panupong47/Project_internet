@@ -29,19 +29,19 @@
 
         <div class="flex form-input">
             <div class="header-form">ชื่อ - นามกุล</div>
-            <input class="form" name="firstname" type="text">
+            <input class="form" name="Name" type="text">
         </div>
         <div class="flex form-input">
             <div class="header-form">โทร</div>
-            <input class="form" name="tle" type="text">
+            <input class="form" name="Tle" type="text">
         </div>
         <div class="flex form-input">
             <div class="header-form">E-mail</div>
-            <input class="form" name="email" type="email">
+            <input class="form" name="Email" type="email">
         </div>
         <div class="flex form-input">
             <div class="header-form">Address</div>
-            <input class="form" name="Address" type="Address">
+            <input class="form" name="Address" type="text">
         </div>
         
         <!-- Added date field -->
@@ -62,15 +62,16 @@
                     <option value="ติดตั้งโปรแกรม">ติดตั้งโปรแกรม</option>
                     <option value="กู้ข้อมูล">กู้ข้อมูล</option>
                 </select>
+                <!-- ส่วนแสดงราคาจะถูกเพิ่มที่นี่โดย JavaScript -->
             </div>
         </div>
         <div class="form-input">
 
             <div id="message" class="message"></div>
 
-            <div class="center" style="vertical-align:middle"><span>
-                    <button type="button" onclick="submitData()" class="button">Submit</span></button>
-            </div>
+            <div class="center" style="vertical-align:middle">
+                <button type="button" id="submitBtn" class="button">Submit</button>
+           </div>
 
         </div>
         <script src="https://cdn.jsdelivr.net/npm/axios@1.6.7/dist/axios.min.js"></script>
