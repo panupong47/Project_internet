@@ -1,82 +1,102 @@
-// Backend: Express.js + Firebase Authentication
-const express = require('express');
-const cors = require('cors');
-const admin = require('firebase-admin');
-const jwt = require('jsonwebtoken');
-require('dotenv').config();
+const API_URL = 'http://localhost:4720'; // ปรับให้ตรงกับพอร์ตของเซิร์ฟเวอร์
 
-admin.initializeApp({ credential: admin.credential.cert(require('./firebase-admin.json')) });
-const app = express();
-app.use(cors());
-app.use(express.json());
+function showTab(tabId) {
+    // ซ่อนทุก tab content
+    document.querySelectorAll('.tab-content').forEach(tab => {
+        tab.classList.remove('active');
+    });
 
-// Verify Firebase Token & Generate JWT
-app.post('/login', async (req, res) => {
-    const { firebaseToken } = req.body;
-    try {
-        const decodedToken = await admin.auth().verifyIdToken(firebaseToken);
-        const userId = decodedToken.uid;
-        const jwtToken = jwt.sign({ userId }, process.env.JWT_SECRET, { expiresIn: '1h' });
-        res.json({ jwtToken });
-    } catch (error) {
-        res.status(401).json({ error: 'Invalid Firebase Token' });
+    // ยกเลิกการ active ของทุก tab
+    document.querySelectorAll('.tab').forEach(tab => {
+        tab.classList.remove('active');
+    });
+
+    // แสดง tab content ที่ต้องการ
+    document.getElementById(tabId).classList.add('active');
+
+    // Active tab ที่เลือก
+    if (tabId === 'login-tab' || tabId === 'register-tab') {
+        document.querySelectorAll('.tab')[tabId === 'login-tab' ? 0 : 1].classList.add('active');
     }
-});
 
-app.listen(4720, () => console.log('Server running on port 4720'));
+    // ซ่อนข้อความ
+    document.getElementById('message').style.display = 'none';
+}
 
-// Frontend: Next.js with Firebase Authentication
-import { useState } from 'react';
-import { getAuth, signInWithPopup, signInWithEmailAndPassword } from 'firebase/auth';
-import firebaseApp from '../firebase';
+function showMessage(text, isSuccess = true) {
+    const messageEl = document.getElementById('message');
+    messageEl.textContent = text;
+    messageEl.className = 'message ' + (isSuccess ? 'success' : 'error');
+    messageEl.style.display = 'block';
+}
 
-const auth = getAuth(firebaseApp);
+async function login() {
+    const email = document.getElementById('login-email').value;
+    const password = document.getElementById('login-password').value;
 
-export default function Login() {
-    const [email, setEmail] = useState('panupong@gmail.com');
-    const [password, setPassword] = useState('beam471919!!');
+    if (!email || !password) {
+        showMessage('กรุณากรอกอีเมลและรหัสผ่าน', false);
+        return;
+    }
 
-    const loginWithProvider = async (provider) => {
-        try {
-            const result = await signInWithPopup(auth, provider);
-            const token = await result.user.getIdToken();
-            const response = await fetch('http://localhost:4720/login', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ firebaseToken: token })
-            });
-            const data = await response.json();
-            localStorage.setItem('jwtToken', data.jwtToken);
-            alert('Login Successful!');
-        } catch (error) {
-            console.error(error);
-            alert('Login Failed');//alert
+    try {
+        const response = await fetch(`${API_URL}/tb_login`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ email, password })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            showMessage(data.message);
+            // บันทึก user id ไว้ใน localStorage
+            localStorage.setItem('userId', data.user.id);
+            // ไปยังหน้าหลักหลังจาก login สำเร็จ
+            setTimeout(() => {
+                window.location.href = 'DataAdmin.html'; // หรือหน้าหลักของคุณ
+            }, 1500);
+        } else {
+            showMessage(data.message, false);
         }
-    };
+    } catch (error) {
+        showMessage('เกิดข้อผิดพลาดในการเชื่อมต่อ', false);
+        console.error('ข้อผิดพลาดในการเข้าสู่ระบบ:', error);
+    }
+}
 
-    const loginWithEmail = async () => {
-        try {
-            const userCredential = await signInWithEmailAndPassword(auth, email, password);
-            const token = await userCredential.user.getIdToken();
-            const response = await fetch('http://localhost:4720/login', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ firebaseToken: token })
-            });
-            const data = await response.json();
-            localStorage.setItem('jwtToken', data.jwtToken);
-            alert('Login Successful!');
-        } catch (error) {
-            console.error(error);
-            alert('Login Failed');
+async function resetPassword() {
+    const email = document.getElementById('reset-email').value;
+
+    if (!email) {
+        showMessage('กรุณากรอกอีเมล', false);
+        return;
+    }
+
+    try {
+        const response = await fetch(`${API_URL}/reset-password-request`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ email })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            showMessage(data.message);
+            // กลับไปหน้า login หลังจากส่งคำขอรีเซ็ตรหัสผ่าน
+            setTimeout(() => {
+                showTab('login-tab');
+            }, 2000);
+        } else {
+            showMessage(data.message, false);
         }
-    };
-
-    return (
-        <div>
-            <h2>Login</h2>
-            <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} />
-            <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} />   
-        </div>
-    );
+    } catch (error) {
+        showMessage('เกิดข้อผิดพลาดในการเชื่อมต่อ', false);
+        console.error('ข้อผิดพลาดในการรีเซ็ตรหัสผ่าน:', error);
+    }
 }

@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login | Admin</title>
+    <title>เข้าสู่ระบบ</title>
     <link rel="stylesheet" href="login.css">
-    <script src="login.js"></script>
 </head>
 <body>
     <header>
@@ -21,39 +20,36 @@
         </div>
     </header>
     <div class="login-container">
-        <h2>Login</h2>
-        <form id="loginForm">
-            <div class="input-group">
-                <label for="useremail">Email</label>
-                <input type="email" id="useremail" name="useremail" required>
+        <h1>Login Admin</h1>
+        
+        <div id="login-tab" class="tab-content active">
+            <div class="form-group">
+                <label for="login-email">อีเมล</label>
+                <input type="email" id="login-email" placeholder="กรอกอีเมลของคุณ">
             </div>
-            <div class="input-group">
-                <label for="password">Password</label>
-                <input type="password" id="password" name="password" required>
+            <div class="form-group">
+                <label for="login-password">รหัสผ่าน</label>
+                <input type="password" id="login-password" placeholder="กรอกรหัสผ่านของคุณ">
             </div>
-            <div class="center">
-                <button type="button" onclick="submitData()" class="button">Submit</button>
-            </div>
-        </form>
+            <button onclick="login()">เข้าสู่ระบบ</button>
+        </div>
+        
+        <div id="message" class="message" style="display: none;"></div>
     </div>
     <footer>
         <div class="container">
             <div class="logo">Computer Repair Shopp</div>
             <p>| บริการซ่อมคอมพิวเตอร์มืออาชีพ รวดเร็ว เชื่อถือได้ |</p>
             <ul class="footer-links">
-                <li><a href="#">หน้าแรก</a></li>
-                <li><a href="#">บริการ</a></li>
-                <li><a href="#">เกี่ยวกับเรา</a></li>
-                <li><a href="#">ราคา</a></li>
-                <li><a href="#">ติดต่อ</a></li>
-            </ul>
-            <ul class="social-icons">
-                <li><a href="#">📱</a></li>
-                <li><a href="#">📘</a></li>
-                <li><a href="#">📸</a></li>
-                <li><a href="#">▶️</a></li>
+                <li><a href="Home.html">หน้าแรก</a></li>
+                <li><a href="Home.html#service">บริการ</a></li>
+                <li><a href="Home.html#why-us">ทำไมต้องเลือกเรา</a></li>
+                <li><a href="Home.html#testimonials">รีวิวลูกค้า</a></li>
+                <li><a href="Home.html#contact">ติดต่อเรา</a></li>
             </ul>
         </div>
     </footer>
+    <script src="https://cdn.jsdelivr.net/npm/axios@1.6.7/dist/axios.min.js"></script>
+    <script src="login.js"></script>
 </body>
 </html>

@@ -8,12 +8,20 @@ const SERVICE_PRICES = {
     'กำจัดไวรัส': 350,
     'บำรุงรักษา': 500,
     'ติดตั้งโปรแกรม': 300,
-    'กู้ข้อมูล': 300
+    'กู้ข้อมูล': 300,
+    'ซ่อมเมนบอร์ด': 500,
+    'เปลี่ยน RAM': 300,
+    'เปลี่ยนฮาร์ดดิสก์/SSD': 400,
+    'เปลี่ยนการ์ดจอ': 450,
+    'เปลี่ยนพาวเวอร์ซัพพลาย': 350,
+    'ติดตั้งวินโดวส์ใหม่': 800,
+    'ล้างเครื่อง PC': 600,
+    'ล้างเครื่องโน้ตบุ๊ก': 750
 };
 
 // ตรวจสอบว่ามี ID ใน URL หรือไม่ (สำหรับโหมดแก้ไข)
 const urlParams = new URLSearchParams(window.location.search);
-const userId = urlParams.get('id');
+const userId = urlParams.get('Id');
 let isEditMode = !!userId;
 
 // โหลดข้อมูลผู้ใช้ถ้าอยู่ในโหมดแก้ไข
@@ -21,7 +29,10 @@ window.onload = async () => {
     // เพิ่ม event listener สำหรับการเลือกบริการเพื่ออัพเดทราคา
     document.getElementById('service').addEventListener('change', updatePrice);
     // เพิ่ม event listener สำหรับปุ่ม submit
-    document.getElementById('submitBtn').addEventListener('click', submitData);
+    document.getElementById('submitBtn').addEventListener('click', function(event) {
+        event.preventDefault(); // ป้องกันการรีเฟรชหน้าเว็บ
+        submitData();
+    });
     
     if (isEditMode) {
         try {
@@ -45,6 +56,10 @@ window.onload = async () => {
             console.error('Error loading user data:', error);
             showMessage('Error loading user data', 'error');
         }
+    } else {
+        // เรียกฟังก์ชัน updatePrice ในกรณีที่เป็นการสร้างข้อมูลใหม่
+        // เพื่อให้แสดงราคาเริ่มต้นตามบริการที่เลือกไว้เริ่มแรก
+        updatePrice();
     }
 };
 
@@ -53,6 +68,22 @@ function updatePrice() {
     const serviceSelect = document.getElementById('service');
     const selectedService = serviceSelect.value;
     const price = SERVICE_PRICES[selectedService] || 0;
+    
+    // เก็บค่าราคาไว้ในฟิลด์ซ่อน (hidden field) เพื่อส่งไปยังเซิร์ฟเวอร์
+    let priceHiddenField = document.getElementById('hidden-price');
+    
+    // สร้างฟิลด์ซ่อนถ้ายังไม่มี
+    if (!priceHiddenField) {
+        priceHiddenField = document.createElement('input');
+        priceHiddenField.type = 'hidden';
+        priceHiddenField.id = 'hidden-price';
+        priceHiddenField.name = 'hidden-price';
+        document.querySelector('form') ? document.querySelector('form').appendChild(priceHiddenField) : 
+            document.body.appendChild(priceHiddenField);
+    }
+    
+    // ตั้งค่าราคาในฟิลด์ซ่อน
+    priceHiddenField.value = price;
     
     // ตรวจสอบว่ามีองค์ประกอบแสดงราคาหรือไม่ ถ้าไม่มีให้สร้างขึ้น
     let priceElement = document.getElementById('service-price');
@@ -89,14 +120,13 @@ async function submitData() {
         const serviceType = document.getElementById('service').value;
         const address = document.querySelector('input[name="Address"]').value;
         
-        
-        console.log("Form values:", { name, telephone, email, repairDate, serviceType, address });
-        
-        // คำนวณราคา
+        // ดึงราคาตามบริการที่เลือกโดยตรงจาก SERVICE_PRICES
         const price = SERVICE_PRICES[serviceType] || 0;
-
+        
+        console.log("Form values:",{ name, telephone, email, repairDate, serviceType, address, price });
+        
         // ตรวจสอบความถูกต้องของฟอร์ม
-        if (!name || !telephone || !email || !repairDate || !serviceType || !address) {
+        if (!name || !telephone || !email || !repairDate || !serviceType || !address || !price) {
             showMessage('กรุณากรอกข้อมูลให้ครบทุกช่อง', 'error');
             return;
         }
@@ -109,7 +139,7 @@ async function submitData() {
             service: serviceType,
             Address: address,
             service_date: repairDate,
-            "service-price": price  // ชื่อฟิลด์ตามที่เห็นในฐานข้อมูล
+            "service_price": price  // ใช้ราคาจากตารางตามบริการที่เลือก
         };
         
         console.log("Sending data to server:", formData);

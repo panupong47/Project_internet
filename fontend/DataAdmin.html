@@ -10,47 +10,51 @@
 
 <body>
     <div class="container">
-        <div class="header">User management page</div>
+        <div class="header">หน้าจัดการข้อมูลผู้ใช้</div>
     </div>
+    
+    <!-- ช่องค้นหาข้อมูล -->
+    <div class="search-container">
+        <input type="text" id="searchInput" placeholder="ค้นหาข้อมูล...">
+        <select id="searchField">
+            <option value="all">ทั้งหมด</option>
+            <option value="Id">รหัส</option>
+            <option value="Name">ชื่อ</option>
+            <option value="Tle">ตำแหน่ง</option>
+            <option value="Email">อีเมล</option>
+            <option value="Address">ที่อยู่</option>
+            <option value="service">บริการ</option>
+        </select>
+        <button id="searchButton">ค้นหา</button>
+    </div>
+    
     <div class="center">
         <table id="user-data">
             <thead>
                 <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Tle</th>
-                    <th>E-mail</th>
-                    <th>Service-Date</th>
-                    <th>Address</th>
-                    <th>Service</th>
-                    <th>Price</th>
-                    <th>Actions</th>
+                    <th>รหัส</th>
+                    <th>ชื่อ</th>
+                    <th>ตำแหน่ง</th>
+                    <th>อีเมล</th>
+                    <th>วันที่ให้บริการ</th>
+                    <th>ที่อยู่</th>
+                    <th>บริการ</th>
+                    <th>ราคา</th>
+                    <th>การดำเนินการ</th>
                 </tr>
             </thead>
             <tbody id="user"></tbody>
         </table>
     </div>
-    <div class="container-login">
-        <div class="header">Admin Data</div>
-    </div>
-    <div class="center">
-        <table id="user-data">
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>password</th>
-                </tr>
-            </thead>
-            <tbody id="user"></tbody>
-        </table>
-    </div>
-    <div class="position_center">
-        <div class="button-back2register">
-            <button type="button" id="register" onclick="window.location.href='Home.html';">Back to Register
-            </button>
-
-        </div>
-    </div>
+    
+    <div class='position'>
+        <a href="service.html" class="h2">
+           <button class="button1" style="vertical-align:middle"><span>
+                 ไปยังแบบฟอร์มการซ่อม
+              </span>
+           </button>
+        </a>
+     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/axios@1.6.7/dist/axios.min.js"></script>
     <script src="DataAdmin.js"></script>

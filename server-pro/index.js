@@ -59,14 +59,14 @@ app.post('/tb_data', async (req, res) => {
         let data = req.body;
         
         // ตรวจสอบข้อมูล
-        if (!data.Name || !data.Tle || !data.Email || !data.service_date || !data.Address || !data.service || !data.price) {
+        if (!data.Name || !data.Tle || !data.Email || !data.service_date || !data.Address || !data.service || !data.service_price) {
             return res.status(400).json({ message: 'กรุณากรอกข้อมูลให้ครบทุกช่อง' });
         }
 
         // บันทึกข้อมูลลงฐานข้อมูล
         const [results] = await conn.query(
             'INSERT INTO tb_data (Name, Tle, Email, service_date, Address, service, price) VALUES (?, ?, ?, ?, ?, ?, ?)',
-            [data.Name, data.Tle, data.Email, data.service_date, data.Address, data.service, data.price]
+            [data.Name, data.Tle, data.Email, data.service_date, data.Address, data.service, data.service_price]
         );
 
         res.json({ message: 'เพิ่มข้อมูลสำเร็จ', data: results });
@@ -76,33 +76,52 @@ app.post('/tb_data', async (req, res) => {
     }
 });
 
+// เอนด์พอยต์สำหรับตรวจสอบการเข้าสู่ระบบ
 app.post('/tb_login', async (req, res) => {
     try {
-        let data = req.body;
+        const { email, password } = req.body;
         
-        // ตรวจสอบข้อมูล
-        if (!data.name || !data.password) {
-            return res.status(400).json({ message: 'กรุณากรอกข้อมูลให้ครบทุกช่อง' });
+        // ตรวจสอบข้อมูลที่ส่งเข้ามา
+        if (!email || !password) {
+            return res.status(400).json({ success: false, message: 'กรุณากรอกอีเมลและรหัสผ่าน' });
         }
         
-        // บันทึกข้อมูลลงฐานข้อมูล
-        const [results] = await conn.query(
-            'INSERT INTO tb_login (name, password) VALUES (?, ?)',
-            [data.name, data.password]
-        );
-
-        res.json({ message: 'เพิ่มข้อมูลสำเร็จ', data: results });
+        // ตรวจสอบว่ามีผู้ใช้ในระบบหรือไม่
+        const [users] = await conn.query('SELECT * FROM tb_login WHERE email = ?', [email]);
+        
+        if (users.length === 0) {
+            return res.status(401).json({ success: false, message: 'อีเมลหรือรหัสผ่านไม่ถูกต้อง' });
+        }
+        
+        const user = users[0];
+        
+        // เปรียบเทียบรหัสผ่าน (การเปรียบเทียบแบบพื้นฐาน - ควรใช้ bcrypt ในระบบจริง)
+        if (user.password !== password) {
+            return res.status(401).json({ success: false, message: 'อีเมลหรือรหัสผ่านไม่ถูกต้อง' });
+        }
+        
+        // ส่งผลลัพธ์การเข้าสู่ระบบสำเร็จ
+        res.json({
+            success: true,
+            message: 'เข้าสู่ระบบสำเร็จ',
+            user: {
+                id: user.id,
+                email: user.email
+                // ไม่ส่งรหัสผ่านกลับไป
+            }
+        });
+        
     } catch (error) {
-        console.error("Error adding login data:", error);
-        res.status(500).json({ message: 'เกิดข้อผิดพลาด', error: error.message });
+        console.error('เกิดข้อผิดพลาดในการเข้าสู่ระบบ:', error);
+        res.status(500).json({ success: false, message: 'เกิดข้อผิดพลาดในการเข้าสู่ระบบ', error: error.message });
     }
-}); 
+});
 
 
 // **3. ดึงข้อมูลตาม ID**
-app.get('/tb_data/:ID', async (req, res) => {
+app.get('/tb_data/:id', async (req, res) => {
     try {
-        let id = req.params.id;
+        let id = req.params.id; // ใช้ id ตัวพิมพ์เล็กตรงกับพารามิเตอร์ :id
         const [results] = await conn.query('SELECT * FROM tb_data WHERE id = ?', [id]);
         if (results.length == 0) {
             return res.status(404).json({ message: 'ไม่พบข้อมูล' });
@@ -114,30 +133,16 @@ app.get('/tb_data/:ID', async (req, res) => {
     }
 });
 
-app.get('/tb_login/:ID', async (req, res) => {
-    try {
-        let id = req.params.id;
-        const [results] = await conn.query('SELECT * FROM tb_login WHERE id = ?', [id]);
-        if (results.length == 0) {
-            return res.status(404).json({ message: 'ไม่พบข้อมูล' });
-        }
-        res.json(results[0]);
-    } catch (error) {
-        console.error('Error fetching login data by ID:', error);
-        res.status(500).json({ message: 'เกิดข้อผิดพลาด', error: error.message });
-    }
-});
-
 
 // **4. อัปเดตข้อมูลตาม ID**
-app.put('/tb_data/:ID', async (req, res) => {
+app.put('/tb_data/:id', async (req, res) => {
     try {
-        let id = req.params.id;
+        let id = req.params.id; // ใช้ id ตัวพิมพ์เล็กตรงกับพารามิเตอร์ :id
         let updateData = req.body;
 
-        // ตรวจสอบข้อมูล
-        if (!updateData.name || !updateData.tle || !updateData.Email || !updateData.address) {
-            return res.status(400).json({ message: 'กรุณากรอกข้อมูลให้ครบทุกช่อง' });
+        // ตรวจสอบว่ามีข้อมูลที่จำเป็นหรือไม่
+        if (!updateData.Name && !updateData.Tle && !updateData.Email && !updateData.Address) {
+            return res.status(400).json({ message: 'ข้อมูลไม่ครบถ้วน' });
         }
 
         const [results] = await conn.query('UPDATE tb_data SET ? WHERE id = ?', [updateData, id]);
@@ -153,33 +158,10 @@ app.put('/tb_data/:ID', async (req, res) => {
     }
 });
 
-app.put('/tb_login/:ID', async (req, res) => {
-    try {
-        let id = req.params.id;
-        let updateData = req.body;
-        
-        // ตรวจสอบข้อมูล
-        if (!updateData.name || !updateData.password) {
-            return res.status(400).json({ message: 'กรุณากรอกข้อมูลให้ครบทุกช่อง' });
-        }
-        
-        const [results] = await conn.query('UPDATE tb_login SET ? WHERE id = ?', [updateData, id]);
-        
-        if (results.affectedRows === 0) {
-            return res.status(404).json({ message: 'ไม่พบข้อมูลที่ต้องการอัปเดต' });
-        }
-        
-        res.json({ message: 'อัปเดตข้อมูลสำเร็จ', data: results });
-    } catch (error) {
-        console.error('Error updating login data:', error);
-        res.status(500).json({ message: 'เกิดข้อผิดพลาด', error: error.message });
-    }
-});
-
 // **5. ลบข้อมูลตาม ID**
-app.delete('/tb_data/:ID', async (req, res) => {
+app.delete('/tb_data/:id', async (req, res) => {
     try {
-        let id = req.params.id;
+        let id = req.params.id; // ใช้ id ตัวพิมพ์เล็กตรงกับพารามิเตอร์ :id
         const [results] = await conn.query('DELETE FROM tb_data WHERE id = ?', [id]);
         
         if (results.affectedRows === 0) {
@@ -189,22 +171,6 @@ app.delete('/tb_data/:ID', async (req, res) => {
         res.json({ message: 'ลบข้อมูลสำเร็จ', data: results });
     } catch (error) {
         console.error('Error deleting data:', error);
-        res.status(500).json({ message: 'เกิดข้อผิดพลาด', error: error.message });
-    }
-});
-
-app.delete('/tb_login/:ID', async (req, res) => {
-    try {
-        let id = req.params.id;
-        const [results] = await conn.query('DELETE FROM tb_login WHERE id = ?', [id]);
-        
-        if (results.affectedRows === 0) {
-            return res.status(404).json({ message: 'ไม่พบข้อมูลที่ต้องการลบ' });
-        }
-        
-        res.json({ message: 'ลบข้อมูลสำเร็จ', data: results });
-    } catch (error) {
-        console.error('Error deleting login data:', error);
         res.status(500).json({ message: 'เกิดข้อผิดพลาด', error: error.message });
     }
 });
